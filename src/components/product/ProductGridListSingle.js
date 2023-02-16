@@ -36,7 +36,7 @@ const ProductGridListSingle = ({
               <img
                 className="default-img"
                 // src={process.env.PUBLIC_URL + product.image[0]}
-                src={"https://api.alphabrandsdistribution.com"+ product.productImage}
+                src={"https://api.alphabrandsdistribution.com/"+ product.productImage}
                 alt=""
                 onClick={() => setModalShow(true)}
                 style={{cursor:"pointer"}}

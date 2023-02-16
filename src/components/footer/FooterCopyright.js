@@ -17,7 +17,8 @@ const FooterCopyright = ({ footerLogo, spaceBottomClass, colorClass }) => {
           rel="noopener noreferrer"
           target="_blank"
         >
-          Flone
+        <br/>
+          Alpha brands distribution
         </a>
         .<br /> All Rights Reserved
       </p>

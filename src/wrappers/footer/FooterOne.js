@@ -17,19 +17,8 @@ const FooterOne = ({
 }) => {
   return (
     <footer className={clsx("footer-area", backgroundColorClass, spaceTopClass, spaceBottomClass, extraFooterClass, spaceLeftClass, spaceRightClass )}>
-      <div className={`${containerClass ? containerClass : "container"}`}>
+      <div className={`${containerClass ? containerClass : "container"} text-center`}>
         <div className="row">
-          <div
-            className={`${
-              sideMenu ? "col-xl-2 col-sm-4" : "col-lg-2 col-sm-4"
-            }`}
-          >
-            {/* footer copyright */}
-            <FooterCopyright
-              footerLogo="/assets/img/logo/logo.png"
-              spaceBottomClass="mb-30"
-            />
-          </div>
           <div
             className={`${
               sideMenu ? "col-xl-2 col-sm-4" : "col-lg-2 col-sm-4"
@@ -67,38 +56,11 @@ const FooterOne = ({
                 <ul>
                   <li>
                     <a
-                      href="#!"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Facebook
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#!"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Twitter
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://www.instagram.com/trust_convenience/reels/"
+                      href="https://www.instagram.com/alphabrandsdistribution/?igshid=YmMyMTA2M2Y%3D"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       Instagram
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#!"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Youtube
                     </a>
                   </li>
                 </ul>
@@ -155,6 +117,19 @@ const FooterOne = ({
           </div>
         </div>
       </div>
+            <div className="text-center mt-5">
+            <p>
+        &copy; {new Date().getFullYear()}{" "}
+        <a
+          href={process.env.PUBLIC_URL + "/about"}
+          rel="noopener noreferrer"
+          target="_self"
+        >
+          <b className="me-1">Alpha Brands Distribution</b>
+        </a>
+        All Rights Reserved
+      </p>
+            </div>
     </footer>
   );
 };

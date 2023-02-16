@@ -56,9 +56,13 @@ const HeaderOne = ({
         <div className={layout === "container-fluid" ? layout : "container"}>
           <div className="row">
             <div className="col-xl-2 col-lg-2 col-md-6 col-4">
+              <a href={process.env.PUBLIC_URL + "/shop-grid-filter"}>
               {/* header logo */}
-              <Logo imageUrl="/assets/img/logo/logo.png" logoClass="logo" />
-            </div>
+              {/* <Logo imageUrl="https://api.alphabrandsdistribution.com/Static/ALPHA BRANDS DISTRIBUTION_2023-01.png" logoClass="logo" /> */}
+              {/* <img src="https://api.alphabrandsdistribution.com/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/>  */}
+              <img src="http://localhost:5000/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/> 
+              </a>
+            </div> 
             <div className="col-xl-8 col-lg-8 d-none d-lg-block">
               {/* Nav menu */}
               <NavMenu />

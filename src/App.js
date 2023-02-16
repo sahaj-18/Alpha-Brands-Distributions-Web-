@@ -21,6 +21,7 @@ const Checkout = lazy(() => import("./pages/other/Checkout"));
 const Privacy = lazy(() => import("./pages/other/Privacy"))
 const Terms = lazy(() => import("./pages/other/Terms"));
 const NotFound = lazy(() => import("./pages/other/NotFound"));
+const Searchbar = lazy(() => import("./wrappers/product/searchBar"))
 
 const App = () => {
   return (
@@ -49,9 +50,10 @@ const App = () => {
               />
             
               {/* Other pages */}
+             
               <Route
-                path={process.env.PUBLIC_URL + "/about"}
-                element={<About/>}
+                path={process.env.PUBLIC_URL + "/searchbar"}
+                element={<Searchbar/>}
               />
               <Route
                 path={process.env.PUBLIC_URL + "/my-account"}
@@ -70,6 +72,10 @@ const App = () => {
                 element={<NotFound/>}
               /> 
               <Route
+                path={process.env.PUBLIC_URL + "/about"}
+                element={<About/>}
+              />
+               <Route
                 path={process.env.PUBLIC_URL + "/privacy"}
                 element={<Privacy/>}
               /> 
@@ -77,6 +83,7 @@ const App = () => {
                 path={process.env.PUBLIC_URL + "/terms"}
                 element={<Terms/>}
               /> 
+             
               <Route path="*" element={<ShopGridFilter/>} />
               </>
               :
@@ -101,6 +108,18 @@ const App = () => {
                 path={process.env.PUBLIC_URL + "/SetNewPassword"}
                 element={<SetNewPassword/>}
               />
+               <Route
+                path={process.env.PUBLIC_URL + "/about"}
+                element={<About/>}
+              />
+               <Route
+                path={process.env.PUBLIC_URL + "/privacy"}
+                element={<Privacy/>}
+              /> 
+              <Route
+                path={process.env.PUBLIC_URL + "/terms"}
+                element={<Terms/>}
+              /> 
               <Route path="*" element={<LoginRegister/>} />
               </>
 }

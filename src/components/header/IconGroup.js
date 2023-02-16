@@ -11,6 +11,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import useHttp from '../../components/CustomHook/useApi'
 import { CartContext } from "../../components/product/ProductModal";
 
+const userId = sessionStorage.getItem('userId')
+const jwtToken = sessionStorage.getItem('Jwt Token')
+console.log(userId);
+console.log(jwtToken);
+
 const IconGroup = ({ iconWhiteClass }) => {
   const handleClick = e => {
     e.currentTarget.nextSibling.classList.toggle("active");
@@ -77,19 +82,8 @@ const Logout = () => {
 
   return (
     <div className={clsx("header-right-wrap", iconWhiteClass)} >
-      {/* <div className="same-style header-search d-none d-lg-block">
-        <button className="search-active" onClick={e => handleClick(e)}>
-          <i className="pe-7s-search" />
-        </button>
-        <div className="search-content">
-          <form action="#">
-            <input type="text" placeholder="Search" />
-            <button className="button-search">
-              <i className="pe-7s-search" />
-            </button>
-          </form>
-        </div>
-      </div> */}
+      
+      {  ((userId !== null) && (jwtToken !== null))  && 
       <div className="same-style account-setting d-none d-lg-block">
         <button
           className="account-setting-active"
@@ -112,6 +106,7 @@ const Logout = () => {
           </ul>
         </div>
       </div>
+      }
       {/* <div className="same-style header-compare">
         <Link to={process.env.PUBLIC_URL + "/compare"}>
           <i className="pe-7s-shuffle" />
@@ -128,6 +123,7 @@ const Logout = () => {
           </span>
         </Link>
       </div> */}
+      { ((userId !== null) && (jwtToken !== null))  && 
       <div className="same-style cart-wrap d-none d-lg-block">
         <button className="icon-cart" onClick={e => handleClick(e)}>
           <i className="pe-7s-shopbag" />
@@ -138,6 +134,8 @@ const Logout = () => {
         {/* menu cart */}
         <MenuCart />
       </div>
+}
+{  ((userId !== null) && (jwtToken !== null)) && 
       <div className="same-style cart-wrap d-block d-lg-none">
         <Link className="icon-cart" to={process.env.PUBLIC_URL + "/cart"}>
           <i className="pe-7s-shopbag" />
@@ -146,6 +144,8 @@ const Logout = () => {
           </span>
         </Link>
       </div>
+}
+{  ((userId !== null) && (jwtToken !== null))  && 
       <div className="same-style mobile-off-canvas d-block d-lg-none">
         <button
           className="mobile-aside-button"
@@ -154,7 +154,9 @@ const Logout = () => {
           <i className="pe-7s-menu" />
         </button>
       </div>
+}
     </div>
+  
   );
 };
 

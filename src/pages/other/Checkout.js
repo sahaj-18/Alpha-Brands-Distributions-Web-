@@ -28,7 +28,7 @@ const Checkout = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const [cartDetails, setCartDetails] = useState([])
   const [total, setTotal] = useState()
-
+  const [isLoading,setIsLoading] = useState(false)
   const { sendRequest } = useHttp();
   const [isFormSubmitted, setIsFormSubmitted] = useState(true);
   const [userDetails, setUserDetails] = useState({
@@ -70,6 +70,7 @@ const Checkout = () => {
           setTotal(data.total)
           let total = (data.total).toString()
           setIsFinalTotal(total)
+          setIsLoading(true)
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
         }
@@ -169,6 +170,15 @@ const Checkout = () => {
             { label: "Checkout", path: process.env.PUBLIC_URL + pathname }
           ]}
         />
+
+{!isLoading && 
+                <div className="flone-preloader-wrapper">
+                <div className="flone-preloader">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>}
+
         {!addresSubmited}
         <div className="checkout-area pt-95 pb-100">
           <div className="container">

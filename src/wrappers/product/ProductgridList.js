@@ -7,8 +7,21 @@ import useHttp from '../../components/CustomHook/useApi'
 import Pagination from "../../components/pagination/pagination";
 import ShopTopActionFilter from "../../components/product/ShopTopActionFilter";
 import Multiselect from 'multiselect-react-dropdown';
+import MultiSelect from 'react-multiple-select-dropdown-lite'
+import cogoToast from 'cogo-toast';
+import 'react-multiple-select-dropdown-lite/dist/index.css'
 import { Button } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+
+const options = [
+  { label: 'Drinks', value: 'Drinks' },
+  { label: 'Chips', value: 'Chips' },
+  { label: 'Chocolates', value: 'Chocolates' },
+  { label: 'Candy/Gummies', value: 'Candy/Gummies' }
+]
 
 const ProductGridList = ({
   products,
@@ -21,13 +34,16 @@ const ProductGridList = ({
   const { sendRequest } = useHttp();
   const { compareItems } = useSelector((state) => state.compare);
   const [productList, setProductList] = useState([])
+  const [removeItems, setRemoveItesm] = useState([])
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [notFound,setNotFound] = useState(false)
+  const [notFound, setNotFound] = useState(false)
   const [totalPages, setTotalPages] = useState([]);
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [totalCount, setTotalCount] = useState(1)
-  const [isApproved,setIsApproved] = useState(null)
+  const [isApproved, setIsApproved] = useState(null)
+  const [value, setvalue] = useState([])
+  const [optionSelected, setOptionSelected] = useState(null)
   let numberOfRecord = 8;
   const [searchConfig, setSearchConfig] = useState({
     searchField: 'productTitle',
@@ -42,6 +58,9 @@ const ProductGridList = ({
     { name: 'Candy/Gummies', label: 'Candy/Gummies' }
   ]
 
+
+
+
   const onSelect = (selectedList, selectedItem) => {
     let arr = []
     selectedList.map((item) => {
@@ -55,35 +74,34 @@ const ProductGridList = ({
     })
   }
 
-  const onRemove = (selectedList, removedItem) => {
-    console.log('arr');
-
-    setTimeout(() => {
-      
-    }, 2000);
-    let arr = [...selectedItems]
-    console.log(arr);
-    arr.map((item, index) => {
-      if (item.name === removedItem.name) {
-        delete arr[index]
-      }
-    })
-    console.log(arr);
+  const onRemoves = (selectedList, removedItem) => {
+    console.log(removeItems);
+    setRemoveItesm([
+      removedItem.name
+    ])
+    // let arr = [...selectedItems]
+    // console.log(arr);
+    // arr.map((item, index) => {
+    //   if (item.name === removedItem.name) {
+    //     delete arr[index]
+    //   }
+    // })
+    // console.log(arr);
     // setSelectedItems(arr)
-    setSearchConfig({
-      ...searchConfig,
-      category: arr,
-    })
+    // setSearchConfig({
+    //   ...searchConfig,
+    //   category: arr,
+    // })
 
   }
 
   const getProductList = useCallback((searchConfig) => {
-    console.log(searchConfig);
+    setIsLoading(false)
     sendRequest({
       url: POST_METHOD.productSearchSortList,
       method: 'POST',
       body: {
-        userId:sessionStorage.getItem('userId'),
+        userId: sessionStorage.getItem('userId'),
         page: currentPage,
         numberOfRecord: numberOfRecord,
         ...searchConfig
@@ -98,18 +116,20 @@ const ProductGridList = ({
         setTotalCount(data.count)
         let totalPage = Math.ceil(data.count / numberOfRecord)
         setTotalPages(Array(totalPage).fill((x, i) => i).map((x, i) => i + 1));
+        cogoToast.success(data.description, { position: "bottom-left" });
       } else {
-        if (data.code === 102){
+        cogoToast.error(data.description, { position: "bottom-left" });
+        if (data.code === 102) {
           setNotFound(true)
+          setIsLoading(true)
           setSearchConfig({
             ...searchConfig,
-            category:[]
+            category: []
           })
         }
         setProductList([])
         setTotalPages([])
         setIsApproved(false)
-
       }
 
     });
@@ -141,106 +161,192 @@ const ProductGridList = ({
   //   });
   // }
 
+  const handleOnchange = val => {
+    val = val.split(",")
+    if (val[0] !== 'Drinks' && val[0] !== 'Chips' && val[0] !== 'Chocolates' && val[0] !== 'Candy/Gummies') {
+      setSearchConfig({
+        ...searchConfig,
+        category: []
+      })
+    } else {
+      setSearchConfig({
+        ...searchConfig,
+        category: val
+      })
+    }
+
+
+  }
+
+
   useEffect(() => {
     getProductList();
   }, [getProductList])
 
+
+  const onChangeSearchConfig = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setSearchConfig({
+        ...searchConfig,
+        [name]: value,
+    })
+}
+
   return (
     <Fragment>
-      {notFound && 
-      <>
-      <div className="shop-top-bar mb-35">
-      <div className="select-shoing-wrap">
-        <div className="shop-select">
-          <Multiselect
-            options={category} // Options to display in the dropdown
-            selectedValues='' // Preselected value to persist in dropdown
-            onSelect={onSelect} // Function will trigger on select event
-            onRemove={onRemove} // Function will trigger on remove event
-            displayValue="name" // Property name to display in the dropdown options
-            placeholder="Categories "
-          />
-        </div>
-        <Button type="submit" style={{backgroundColor:"#a749ff",border:"1px solid #a749ff",width:"100px",height:"40px"}} onClick={getProductList.bind(null, searchConfig)}>Search</Button>              
-      </div>
-    </div>
-
-
-      <div className="error-area pt-40 pb-100">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-xl-7 col-lg-8 text-center">
-                <div className="error">
-                  <h1 style={{fontSize:'50px'}}>Oops!</h1>
-                  <h4 style={{marginBottom:"30px"}}>
-                    Your Search Is Not Found In List
-                  </h4>
+      {notFound &&
+        <>
+         <div className="container-xxl">
+          <div className="row mb-5">
+            <div className="col-md-4 col-lg-4 col-xl-4">
+              <div className="row mb-3">
+                <div className="col-md-6 col-lg-6 col-xl-6 mb-3">
+                  <select name="searchField" type="select" style={{ height: "46px", borderRadius: '10px' }} onChange={onChangeSearchConfig}>
+                    <option value="productTitle">Name</option>
+                    <option value="priceForwholesaler">Price</option>
+                  </select>
                 </div>
+
+                <div className="col-md-6 col-lg-6 col-xl-6">
+                  <input
+                    name="searchValue"
+                    placeholder="Search Here"
+                    type="text"
+                    value={searchConfig.searchValue}
+                    onChange={onChangeSearchConfig}
+                    style={{ height: "46px", borderRadius: '10px', backgroundColor: 'white',border:'1px solid #eceff8' }}
+                  />
+                </div>
+
+              </div>
+            </div>
+            <div className="col-md-6 col-lg-6 col-xl-6">
+              <div className="row mb-3">
+                <div className="col-md-6 col-lg-6 col-xl-6">
+                  <MultiSelect
+                    onChange={handleOnchange}
+                    options={options}
+                    placeholder="Select Category"
+                    value={optionSelected}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-md-2 col-lg-2 col-xl-2">
+              <div className="d-grid gap-2">
+                <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff", width: "100px", height: "40px" }} onClick={getProductList.bind(null, searchConfig)}>Search</Button>
               </div>
             </div>
           </div>
         </div>
-        </>
-        } 
 
-              {!isLoading && 
-                <div className="flone-preloader-wrapper">
-                <div className="flone-preloader">
-                  <span></span>
-                  <span></span>
+
+          <div className="error-area pt-40 pb-100">
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-xl-7 col-lg-8 text-center">
+                  <div className="error">
+                    <h1 style={{ fontSize: '50px' }}>Oops!</h1>
+                    <h4 style={{ marginBottom: "30px" }}>
+                      Your Search Is Not Found In List
+                    </h4>
+                  </div>
                 </div>
-              </div>}
-      {(isApproved && isLoading ) &&
-      <div className="shop-top-bar mb-35">
-        <div className="select-shoing-wrap">
-          <div className="shop-select">
-            <Multiselect
-              options={category} // Options to display in the dropdown
-              selectedValues='' // Preselected value to persist in dropdown
-              onSelect={onSelect} // Function will trigger on select event
-              onRemove={onRemove} // Function will trigger on remove event
-              displayValue="name" // Property name to display in the dropdown options
-              placeholder="Categories "
-            />
+              </div>
+            </div>
           </div>
-          <Button type="submit" style={{backgroundColor:"#a749ff",border:"1px solid #a749ff",width:"100px",height:"40px"}} onClick={getProductList.bind(null, searchConfig)}>Search</Button>              
-        </div>
-      </div>
-  }
-      {(isApproved && isLoading && !notFound) && 
-      <>
-      {productList?.map(product => {
-        return (
-          <div className="col-xl-4 col-sm-6" key={product.id}>
-            <ProductGridListSingle
-              spaceBottomClass="mb-25"
-              product={product}
-              currency={currency}
-              cartItem={
-                cartItems.find(cartItem => cartItem.id === product.id)
-              }
-            />
-          </div>
-        )
-      })}
-      </>
+        </>
       }
-      {(!isApproved && isLoading && !notFound)&& <>
+
+      {!isLoading &&
+        <div className="flone-preloader-wrapper">
+          <div className="flone-preloader">
+            <span></span>
+            <span></span>
+          </div>
+        </div>}
+      {(isApproved && isLoading) &&
+
+
+        <div className="container-xxl">
+          <div className="row mb-5">
+            <div className="col-md-4 col-lg-4 col-xl-4">
+              <div className="row mb-3">
+                <div className="col-md-6 col-lg-6 col-xl-6 mb-3">
+                  <select name="searchField" type="select" style={{ height: "46px", borderRadius: '10px' }} onChange={onChangeSearchConfig}>
+                    <option value="productTitle">Name</option>
+                    <option value="priceForwholesaler">Price</option>
+                  </select>
+                </div>
+
+                <div className="col-md-6 col-lg-6 col-xl-6">
+                  <input
+                    name="searchValue"
+                    placeholder="Search Here"
+                    type="text"
+                    value={searchConfig.searchValue}
+                    onChange={onChangeSearchConfig}
+                    style={{ height: "46px", borderRadius: '10px', backgroundColor: 'white',border:'1px solid #eceff8' }}
+                  />
+                </div>
+
+              </div>
+            </div>
+            <div className="col-md-6 col-lg-6 col-xl-6">
+              <div className="row mb-3">
+                <div className="col-md-6 col-lg-6 col-xl-6">
+                  <MultiSelect
+                    onChange={handleOnchange}
+                    options={options}
+                    placeholder="Select Category"
+                    value={optionSelected}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-md-2 col-lg-2 col-xl-2">
+              <div className="d-grid gap-2">
+                <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff", width: "100px", height: "40px" }} onClick={getProductList.bind(null, searchConfig)}>Search</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      {(isApproved && isLoading && !notFound) &&
+        <>
+          {productList?.map(product => {
+            return (
+              <div className="col-xl-4 col-sm-6" key={product.id}>
+                <ProductGridListSingle
+                  spaceBottomClass="mb-25"
+                  product={product}
+                  currency={currency}
+                  cartItem={
+                    cartItems.find(cartItem => cartItem.id === product.id)
+                  }
+                />
+              </div>
+            )
+          })}
+        </>
+      }
+      {(!isApproved && isLoading && !notFound) && <>
         <div className="error-area pt-40 pb-100">
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-xl-7 col-lg-8 text-center">
                 <div className="error">
-                  <h1 style={{fontSize:'50px'}}>Oops!</h1>
-                  <h4 style={{marginBottom:"30px"}}>
-                  you are not approved by admin so please try again later.
+                  <h1 style={{ fontSize: '50px' }}>Oops!</h1>
+                  <h4 style={{ marginBottom: "30px" }}>
+                    you are not approved by admin so please try again later.
                   </h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </>} 
+      </>}
       <Pagination
         className="pagination-bar"
         currentPage={currentPage}

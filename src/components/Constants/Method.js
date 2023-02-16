@@ -9,8 +9,8 @@ export const POST_METHOD = {
     editToCart: '/api/admin/editItemInCart',
     getCartDetails: '/api/admin/getCartDetails',
     deleteCartItems: '/api/admin/deleteItemInCart',
-    userUpdate: 'api/user/userUpdate',
-    getUserDetails: 'api/user/gteUserDetail',
+    userUpdate: '/api/user/userUpdate',
+    getUserDetails: '/api/user/gteUserDetail',
     userLogout: '/api/user/userLogout',
     addHistory: '/api/admin/addToOrderHistory',
     clearWholeCart: '/api/admin/clearWholeCart'

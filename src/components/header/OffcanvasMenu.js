@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import HeaderSocial from "./sub-components/HeaderSocial";
-import NavMenu from "./NavMenu";
+import NavMenu from "./NavMenu"; 
 
 const OffcanvasMenu = ({ activeState, getActiveState }) => {
   return (
@@ -19,7 +19,7 @@ const OffcanvasMenu = ({ activeState, getActiveState }) => {
         <Link to={process.env.PUBLIC_URL + "/"}>
           <img
             alt=""
-            src={process.env.PUBLIC_URL + "/assets/img/logo/logo.png"}
+            src="."
           />
         </Link>
       </div>

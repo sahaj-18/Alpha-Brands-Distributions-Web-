@@ -23,6 +23,7 @@ const Cart = () => {
   const currency = useSelector((state) => state.currency);
   const { cartItems } = useSelector((state) => state.cart);
   const [cartDetails,setCartDetails] = useState([])
+  const [isLoading,setIsLoading] = useState(false)
   const [total,setTotal] = useState(null)
   const { sendRequest } = useHttp();
   const viewCartItem = () => {
@@ -38,6 +39,7 @@ const Cart = () => {
           // cogoToast.success(data.description, { position: "bottom-left" });
           setCartDetails(data.responseData[0].items)
           setTotal(data.total)
+          setIsLoading(true)
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
         }
@@ -55,6 +57,7 @@ const Cart = () => {
         if (data.success) {
           cogoToast.success(data.description, { position: "bottom-left" });
           viewCartItem()
+          setIsLoading(true)
         } else {
           cogoToast.success(data.description, { position: "bottom-left" });
         }
@@ -101,6 +104,15 @@ const Cart = () => {
             {label: "Cart", path: process.env.PUBLIC_URL + pathname }
           ]} 
         />
+
+            {!isLoading && 
+                <div className="flone-preloader-wrapper">
+                <div className="flone-preloader">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>}
+
         <div className="cart-main-area pt-90 pb-100">
           <div className="container">
             {console.log(cartItems)}
@@ -165,7 +177,7 @@ const Cart = () => {
 
                                 <td className="product-remove">
                                   <button
-                                    onClick={() => {deleteItemFromCart(cartItem._id);dispatch(deleteFromCart(cartItem._id))}}
+                                    onClick={() => {deleteItemFromCart(cartItem._id);setIsLoading(false);dispatch(deleteFromCart(cartItem._id))}}
                                   >
                                     <i className="fa fa-times"></i>
                                   </button>
