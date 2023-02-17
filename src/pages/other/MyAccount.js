@@ -13,6 +13,7 @@ const MyAccount = () => {
   let { pathname } = useLocation();
   const { sendRequest } = useHttp();
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [isLoading,setIsLoading] = useState(false)
   const [userDetails, setUserDetails] = useState({
     firstName: '',
     lastName: '',
@@ -47,8 +48,10 @@ const MyAccount = () => {
       (data) => {
         if (data.success) {
           setUserDetails(data.responseData)
+          setIsLoading(true)
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
+          setIsLoading(true)
         }
       }
     );
@@ -104,6 +107,14 @@ const MyAccount = () => {
             { label: "My Account", path: process.env.PUBLIC_URL + pathname }
           ]}
         />
+
+{!isLoading && 
+                <div className="flone-preloader-wrapper">
+                <div className="flone-preloader">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>}
 
         <div className="myaccount-area pb-80 pt-100">
           <div className="container">

@@ -105,15 +105,15 @@ const FooterOne = ({
           </div>
           <div
             className={`${
-              sideMenu ? "col-xl-3 col-sm-8" : "col-lg-4 col-sm-6"
+              sideMenu ? "col-xl-3 col-sm-8" : "col-lg-3 col-sm-6"
             }`}
           >
             {/* footer newsletter */}
-            {/* <FooterNewsletter
+            <FooterNewsletter
               spaceBottomClass="mb-30"
               spaceLeftClass="ml-70"
               sideMenu={sideMenu}
-            /> */}
+            />
           </div>
         </div>
       </div>

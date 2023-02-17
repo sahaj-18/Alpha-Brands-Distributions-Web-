@@ -59,8 +59,8 @@ const HeaderOne = ({
               <a href={process.env.PUBLIC_URL + "/shop-grid-filter"}>
               {/* header logo */}
               {/* <Logo imageUrl="https://api.alphabrandsdistribution.com/Static/ALPHA BRANDS DISTRIBUTION_2023-01.png" logoClass="logo" /> */}
-              {/* <img src="https://api.alphabrandsdistribution.com/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/>  */}
-              <img src="http://localhost:5000/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/> 
+              <img src="https://api.alphabrandsdistribution.com/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/> 
+              {/* <img src="http://localhost:5000/Static/logos.jpg" style={{marginTop:"30px",width:"350px"}} logoClass="logo"/>  */}
               </a>
             </div> 
             <div className="col-xl-8 col-lg-8 d-none d-lg-block">

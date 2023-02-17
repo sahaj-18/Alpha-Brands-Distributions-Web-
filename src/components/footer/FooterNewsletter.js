@@ -12,12 +12,12 @@ const FooterNewsletter = ({
   return (
     <div className={clsx("footer-widget", spaceBottomClass, sideMenu ? "ml-ntv5" : spaceLeftClass, widgetColorClass)}>
       <div className="footer-title">
-        <h3>SUBSCRIBE</h3>
+        <h3>Contact Us</h3>
       </div>
       <div className={clsx("subscribe-style", colorClass)}>
-        <p>Get E-mail updates about our latest shop and special offers.</p>
+        <p> <a href = "mailto: alphadistributionyyc@gmail.com"><b>alphadistributionyyc@gmail.com</b></a></p>
         {/* subscribe email */}
-        <SubscribeEmail mailchimpUrl="#!" />
+        {/* <SubscribeEmail mailchimpUrl="#!" /> */}
       </div>
     </div>
   );

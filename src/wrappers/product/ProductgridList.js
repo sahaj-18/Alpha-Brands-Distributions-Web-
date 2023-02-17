@@ -41,7 +41,7 @@ const ProductGridList = ({
   const [totalPages, setTotalPages] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const [totalCount, setTotalCount] = useState(1)
-  const [isApproved, setIsApproved] = useState(null)
+  const [isApproved, setIsApproved] = useState(false)
   const [value, setvalue] = useState([])
   const [optionSelected, setOptionSelected] = useState(null)
   let numberOfRecord = 8;
@@ -58,7 +58,8 @@ const ProductGridList = ({
     { name: 'Candy/Gummies', label: 'Candy/Gummies' }
   ]
 
-
+  const p = sessionStorage.getItem('type') === '1'
+  console.log(p);
 
 
   const onSelect = (selectedList, selectedItem) => {
@@ -119,6 +120,7 @@ const ProductGridList = ({
         cogoToast.success(data.description, { position: "bottom-left" });
       } else {
         cogoToast.error(data.description, { position: "bottom-left" });
+        setIsLoading(true)
         if (data.code === 102) {
           setNotFound(true)
           setIsLoading(true)
@@ -204,10 +206,8 @@ const ProductGridList = ({
                 <div className="col-md-6 col-lg-6 col-xl-6 mb-3">
                   <select name="searchField" type="select" style={{ height: "46px", borderRadius: '10px' }} onChange={onChangeSearchConfig}>
                     <option value="productTitle">Name</option>
-                    <option value="priceForwholesaler">Price</option>
                   </select>
                 </div>
-
                 <div className="col-md-6 col-lg-6 col-xl-6">
                   <input
                     name="searchValue"
@@ -265,7 +265,9 @@ const ProductGridList = ({
             <span></span>
             <span></span>
           </div>
-        </div>}
+        </div>
+        
+        }
       {(isApproved && isLoading) &&
 
 
@@ -276,7 +278,7 @@ const ProductGridList = ({
                 <div className="col-md-6 col-lg-6 col-xl-6 mb-3">
                   <select name="searchField" type="select" style={{ height: "46px", borderRadius: '10px' }} onChange={onChangeSearchConfig}>
                     <option value="productTitle">Name</option>
-                    <option value="priceForwholesaler">Price</option>
+                   
                   </select>
                 </div>
 
@@ -331,7 +333,9 @@ const ProductGridList = ({
           })}
         </>
       }
-      {(!isApproved && isLoading && !notFound) && <>
+      
+      {(!isApproved && isLoading && !notFound) && 
+      <>
         <div className="error-area pt-40 pb-100">
           <div className="container">
             <div className="row justify-content-center">

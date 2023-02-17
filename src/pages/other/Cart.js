@@ -41,7 +41,8 @@ const Cart = () => {
           setTotal(data.total)
           setIsLoading(true)
         } else {
-          // cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "bottom-left" });
+          setIsLoading(true)
         }
       }
     );
