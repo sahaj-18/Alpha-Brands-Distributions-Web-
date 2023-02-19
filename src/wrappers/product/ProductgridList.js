@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, { Fragment, useState, useEffect, useCallback } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProductGridListSingle from "../../components/product/ProductGridListSingle";
 import { POST_METHOD } from "../../components/Constants/Method"
@@ -29,6 +30,7 @@ const ProductGridList = ({
 }) => {
 
   const currency = { currencyName: "CAD", currencyRate: 1, currencySymbol: "€" }
+  const navigate = useNavigate();
   const { cartItems } = useSelector((state) => state.cart);
   const { wishlistItems } = useSelector((state) => state.wishlist);
   const { sendRequest } = useHttp();
@@ -44,6 +46,7 @@ const ProductGridList = ({
   const [isApproved, setIsApproved] = useState(false)
   const [value, setvalue] = useState([])
   const [optionSelected, setOptionSelected] = useState(null)
+  const [myState,setMyState] = useState([])
   let numberOfRecord = 8;
   const [searchConfig, setSearchConfig] = useState({
     searchField: 'productTitle',
@@ -58,45 +61,36 @@ const ProductGridList = ({
     { name: 'Candy/Gummies', label: 'Candy/Gummies' }
   ]
 
-  const p = sessionStorage.getItem('type') === '1'
-  console.log(p);
+ 
 
+  const handleOnchange = val => {
+    val = val.split(",")
+   if(val[0] !== 'Drinks' && val[0] !== 'Chips' && val[0] !== 'Chocolates' && val[0] !== 'Candy/Gummies') {
+      setSearchConfig({
+        ...searchConfig,
+        category: []
+      })
+      setOptionSelected(null)
+      setMyState([])
+    } 
+    else {
+      setSearchConfig({
+        ...searchConfig,
+        category: val
+      })
+      setOptionSelected(val)
+      setMyState(val)
+    }
 
-  const onSelect = (selectedList, selectedItem) => {
-    let arr = []
-    selectedList.map((item) => {
-      arr.push(item.name)
-    })
-    console.log(arr);
-    // setSelectedItems(arr)
-    setSearchConfig({
-      ...searchConfig,
-      category: arr,
-    })
-  }
-
-  const onRemoves = (selectedList, removedItem) => {
-    console.log(removeItems);
-    setRemoveItesm([
-      removedItem.name
-    ])
-    // let arr = [...selectedItems]
-    // console.log(arr);
-    // arr.map((item, index) => {
-    //   if (item.name === removedItem.name) {
-    //     delete arr[index]
-    //   }
-    // })
-    // console.log(arr);
-    // setSelectedItems(arr)
-    // setSearchConfig({
-    //   ...searchConfig,
-    //   category: arr,
-    // })
 
   }
 
   const getProductList = useCallback((searchConfig) => {
+    if(localStorage.getItem('NotFound') === 'true'){
+        localStorage.setItem('NotFound',false)
+      // navigate('/shop-grid-filter', { replace: true });
+      window.location.reload();
+  }
     setIsLoading(false)
     sendRequest({
       url: POST_METHOD.productSearchSortList,
@@ -114,15 +108,17 @@ const ProductGridList = ({
         setNotFound(false)
         setIsApproved(true)
         setIsLoading(true)
+        localStorage.setItem('NotFound',false)
         setTotalCount(data.count)
         let totalPage = Math.ceil(data.count / numberOfRecord)
         setTotalPages(Array(totalPage).fill((x, i) => i).map((x, i) => i + 1));
-        cogoToast.success(data.description, { position: "bottom-left" });
+        cogoToast.success(data.description, { position: "top-right" });
       } else {
-        cogoToast.error(data.description, { position: "bottom-left" });
+        cogoToast.error(data.description, { position: "top-right" });
         setIsLoading(true)
         if (data.code === 102) {
           setNotFound(true)
+          localStorage.setItem('NotFound',true)
           setIsLoading(true)
           setSearchConfig({
             ...searchConfig,
@@ -163,27 +159,11 @@ const ProductGridList = ({
   //   });
   // }
 
-  const handleOnchange = val => {
-    val = val.split(",")
-    if (val[0] !== 'Drinks' && val[0] !== 'Chips' && val[0] !== 'Chocolates' && val[0] !== 'Candy/Gummies') {
-      setSearchConfig({
-        ...searchConfig,
-        category: []
-      })
-    } else {
-      setSearchConfig({
-        ...searchConfig,
-        category: val
-      })
-    }
-
-
-  }
 
 
   useEffect(() => {
     getProductList();
-  }, [getProductList])
+  }, [getProductList,sendRequest])
 
 
   const onChangeSearchConfig = (event) => {
@@ -197,9 +177,17 @@ const ProductGridList = ({
 
   return (
     <Fragment>
-      {notFound &&
-        <>
-         <div className="container-xxl">
+      {!isLoading &&
+        <div className="flone-preloader-wrapper">
+          <div className="flone-preloader">
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        
+        }
+
+        <div className="container-xxl">
           <div className="row mb-5">
             <div className="col-md-4 col-lg-4 col-xl-4">
               <div className="row mb-3">
@@ -240,8 +228,9 @@ const ProductGridList = ({
             </div>
           </div>
         </div>
-
-
+       
+      {(notFound) &&
+        <>
           <div className="error-area pt-40 pb-100">
             <div className="container">
               <div className="row justify-content-center">
@@ -256,19 +245,27 @@ const ProductGridList = ({
               </div>
             </div>
           </div>
-        </>
+        </> 
+}
+        { (isApproved && isLoading) &&
+         <>
+         {productList?.map(product => {
+           return (
+             <div className="col-xl-4 col-sm-6" key={product.id}>
+               <ProductGridListSingle
+                 spaceBottomClass="mb-25"
+                 product={product}
+                 currency={currency}
+                 cartItem={
+                   cartItems.find(cartItem => cartItem.id === product.id)
+                 }
+               />
+             </div>
+           )
+         })}
+       </>
       }
-
-      {!isLoading &&
-        <div className="flone-preloader-wrapper">
-          <div className="flone-preloader">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-        
-        }
-      {(isApproved && isLoading) &&
+      {/* {(isApproved && isLoading) &&
 
 
         <div className="container-xxl">
@@ -314,25 +311,10 @@ const ProductGridList = ({
             </div>
           </div>
         </div>
-      }
-      {(isApproved && isLoading && !notFound) &&
-        <>
-          {productList?.map(product => {
-            return (
-              <div className="col-xl-4 col-sm-6" key={product.id}>
-                <ProductGridListSingle
-                  spaceBottomClass="mb-25"
-                  product={product}
-                  currency={currency}
-                  cartItem={
-                    cartItems.find(cartItem => cartItem.id === product.id)
-                  }
-                />
-              </div>
-            )
-          })}
-        </>
-      }
+      } */}
+      {/* {(isApproved && isLoading && !notFound) &&
+       
+      } */}
       
       {(!isApproved && isLoading && !notFound) && 
       <>

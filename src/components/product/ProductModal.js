@@ -70,7 +70,7 @@ function ProductModal({ product, currency, discountedPrice, finalProductPrice, f
   const { addItem } = useCart();
   const { totalItems } = useCart();
 
-  console.log(cartItems)
+  
 
   const addToCartItem = () => {
     sendRequest(
@@ -81,10 +81,10 @@ function ProductModal({ product, currency, discountedPrice, finalProductPrice, f
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
           addItem(product, quantityCount);
         } else {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
         }
       }
     );
@@ -99,9 +99,9 @@ function ProductModal({ product, currency, discountedPrice, finalProductPrice, f
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
         } else {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
         }
       }
     );

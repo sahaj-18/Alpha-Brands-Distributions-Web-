@@ -36,12 +36,12 @@ const Cart = () => {
       (data) => {
         if (data.success) {
           console.log(data);
-          // cogoToast.success(data.description, { position: "bottom-left" });
+          // cogoToast.success(data.description, { position: "top-right" });
           setCartDetails(data.responseData[0].items)
           setTotal(data.total)
           setIsLoading(true)
         } else {
-          cogoToast.error(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "top-right" });
           setIsLoading(true)
         }
       }
@@ -56,11 +56,11 @@ const Cart = () => {
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
           viewCartItem()
           setIsLoading(true)
         } else {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "top-right" });
         }
       }
     );
@@ -79,11 +79,11 @@ const Cart = () => {
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
           // viewCartItem() 
           navigate('/shop-grid-filter', { replace: true });
         } else {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "top-right" });
         }
       }
     );

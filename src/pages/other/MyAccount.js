@@ -84,10 +84,10 @@ const MyAccount = () => {
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
           getUserDetails()
         } else {
-          cogoToast.error(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "top-right" });
         }
       }
     );

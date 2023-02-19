@@ -103,11 +103,11 @@ const LoginRegister = () => {
             sessionStorage.setItem("userId", data.responseData._id);
             sessionStorage.setItem("type", data.responseData.type);
             sessionStorage.setItem("isApproved", data.responseData.isApproved);
-            cogoToast.success(data.description, { position: "bottom-left" });
+            cogoToast.success(data.description, { position: "top-right" });
             navigate('/shop-grid-filter', { replace: true });
             window.location.reload();
           } else {
-            cogoToast.error(data.description, { position: "bottom-left" });
+            cogoToast.error(data.description, { position: "top-right" });
           }
         }
       );
@@ -143,11 +143,11 @@ const LoginRegister = () => {
             sessionStorage.setItem("userId", data.responseData._id);
             sessionStorage.setItem("type", data.responseData.type);
             sessionStorage.setItem("isApproved", data.responseData.isApproved);
-            cogoToast.success(data.description, { position: "bottom-left" });
+            cogoToast.success(data.description, { position: "top-right" });
             navigate('/shop-grid-filter', { replace: true });
             window.location.reload();
           } else {
-            cogoToast.error(data.description, { position: "bottom-left" });
+            cogoToast.error(data.description, { position: "top-right" });
           }
         }
       );

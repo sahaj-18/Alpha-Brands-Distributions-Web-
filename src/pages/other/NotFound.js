@@ -9,10 +9,10 @@ const NotFound = () => {
 
   return (
     <Fragment>
-      <SEO
+      {/* <SEO
         titleTemplate="Not Found"
         description="404 of flone react minimalist eCommerce template."
-      />
+      /> */}
       <LayoutOne headerTop="visible">
         {/* breadcrumb */}
         <Breadcrumb 

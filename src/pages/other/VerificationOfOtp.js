@@ -51,11 +51,11 @@ const VerificationOfOtp = () => {
         },
         (data) => {
           if (data.success) {
-            cogoToast.success(data.description, {position: "bottom-left"});
+            cogoToast.success(data.description, {position: "top-right"});
             sessionStorage.setItem("userId", data.responseData);
             navigate('/SetNewPassword', { replace: true });
           } else {
-            cogoToast.error(data.description, {position: "bottom-left"});
+            cogoToast.error(data.description, {position: "top-right"});
           }
         }
       );

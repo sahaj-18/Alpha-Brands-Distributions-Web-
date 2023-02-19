@@ -10,35 +10,27 @@ import FunFactOne from "../../wrappers/fun-fact/FunFactOne";
 import TeamMemberOne from "../../wrappers/team-member/TeamMemberOne";
 import BrandLogoSliderOne from "../../wrappers/brand-logo/BrandLogoSliderOne";
 
-const About = () => {
+const AboutForWeb = () => {
   let { pathname } = useLocation();
-
   return (
     <Fragment>
       {/* <SEO
         titleTemplate="About us"
         description="About page of flone react minimalist eCommerce template."
       />  */}
-      
+      <LayoutOne headerTop="visible">
         {/* breadcrumb */}
-        {/* <Breadcrumb 
+        <Breadcrumb 
           pages={[
             {label: "Home", path: process.env.PUBLIC_URL + "/" },
             {label: "About us", path: process.env.PUBLIC_URL + pathname }
           ]} 
-        /> */}
-
+        />
         {/* section title with text */}
         <SectionTitleWithText spaceTopClass="pt-100" spaceBottomClass="pb-95" />
-
-       
-          
-      
-
-    
-      {/* </LayoutOne> */}
+      </LayoutOne>
     </Fragment>
-  );
+  )
 };
 
-export default About;
+export default AboutForWeb;

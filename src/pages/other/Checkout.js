@@ -73,6 +73,7 @@ const Checkout = () => {
           setIsLoading(true)
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
+          // setIsLoading(true)
         }
       }
     );
@@ -158,10 +159,10 @@ const Checkout = () => {
 
   return (
     <Fragment>
-      <SEO
+      {/* <SEO
         titleTemplate="Checkout"
         description="Checkout page of flone react minimalist eCommerce template."
-      />
+      /> */}
       <LayoutOne headerTop="visible">
         {/* breadcrumb */}
         <Breadcrumb

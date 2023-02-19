@@ -49,10 +49,10 @@ const MenuCart = () => {
       },
       (data) => {
         if (data.success) {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
           viewCartItem()
         } else {
-          cogoToast.success(data.description, { position: "bottom-left" });
+          cogoToast.success(data.description, { position: "top-right" });
         }
       }
     );

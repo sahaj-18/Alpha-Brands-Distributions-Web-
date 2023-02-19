@@ -51,10 +51,10 @@ const SetNewPassword = () => {
         },
         (data) => {
           if (data.success) {
-            cogoToast.success(data.description, {position: "bottom-left"});
+            cogoToast.success(data.description, {position: "top-right"});
             navigate('/login-register', { replace: true });
           } else {
-            cogoToast.error(data.description, {position: "bottom-left"});
+            cogoToast.error(data.description, {position: "top-right"});
           }
         }
       );

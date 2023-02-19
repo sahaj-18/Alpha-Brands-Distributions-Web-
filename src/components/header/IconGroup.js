@@ -13,8 +13,7 @@ import { CartContext } from "../../components/product/ProductModal";
 
 const userId = sessionStorage.getItem('userId')
 const jwtToken = sessionStorage.getItem('Jwt Token')
-console.log(userId);
-console.log(jwtToken);
+
 
 const IconGroup = ({ iconWhiteClass }) => {
   const handleClick = e => {
@@ -69,12 +68,12 @@ const Logout = () => {
     },
     (data) => {
       if (data.success) {
-        cogoToast.success(data.description, { position: "bottom-left" });
+        cogoToast.success(data.description, { position: "top-right" });
         navigate('/', { replace: true });
         sessionStorage.clear()
         window.location.reload()
       } else {
-        cogoToast.success(data.description, { position: "bottom-left" });
+        cogoToast.success(data.description, { position: "top-right" });
       }
     }
   );

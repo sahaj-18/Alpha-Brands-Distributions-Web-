@@ -19,14 +19,13 @@ const MobileNavMenu = () => {
        body: { userId:sessionStorage.getItem('userId'), jwtToken:sessionStorage.getItem('Jwt Token')}
      },
      (data) => {
-      console.log('HELLO');
        if (data.success) {
          sessionStorage.clear()
-         cogoToast.success(data.description, { position: "bottom-left" });
+         cogoToast.success(data.description, { position: "top-right" });
          navigate('/', { replace: true });
          window.location.reload()
        } else {
-         cogoToast.success(data.description, { position: "bottom-left" });
+         cogoToast.success(data.description, { position: "top-right" });
        }
      }
    );

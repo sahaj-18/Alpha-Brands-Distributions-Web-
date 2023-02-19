@@ -22,6 +22,7 @@ const Privacy = lazy(() => import("./pages/other/Privacy"))
 const Terms = lazy(() => import("./pages/other/Terms"));
 const NotFound = lazy(() => import("./pages/other/NotFound"));
 const Searchbar = lazy(() => import("./wrappers/product/searchBar"))
+const AboutForWeb = lazy(() => import("./pages/other/AboutForWeb"))
 
 const App = () => {
   return (
