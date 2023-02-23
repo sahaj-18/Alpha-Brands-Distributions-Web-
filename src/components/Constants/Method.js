@@ -1,5 +1,6 @@
 export const POST_METHOD = {
     userLogin: '/api/user/userLogin',
+    // userRegistration: '/api/user/userRegistartion',
     userRegistration: '/api/user/userRegistartion',
     forgotPassword:'/api/user/forgotPassword',
     otpVerification: '/api/user/verificationOfOtp',

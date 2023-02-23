@@ -1,7 +1,11 @@
 import { Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import ScrollToTop from "./helpers/scroll-top";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import useHttp from './components/CustomHook/useApi'
+import { POST_METHOD } from "./components/Constants/Method"
+import { deleteAllFromCart,addToCart } from "./store/slices/cart-slice";
 
 let JwtToken = sessionStorage.getItem('Jwt Token');
 
@@ -25,7 +29,63 @@ const Searchbar = lazy(() => import("./wrappers/product/searchBar"))
 const AboutForWeb = lazy(() => import("./pages/other/AboutForWeb"))
 
 const App = () => {
+  const dispatch = useDispatch();
+  const { sendRequest } = useHttp();
+  const [cartDetails,setCartDetails] = useState([])
+  const [isLoading,setIsLoading] = useState(false)
+  const viewCartItem = () => {
+    sendRequest(
+      {
+        url: POST_METHOD.getCartDetails,
+        method: "POST",
+        body: { userId:sessionStorage.getItem('userId')}
+      },
+      (data) => {
+        if (data.success) {
+          console.log('data',data.responseData[0].items);
+          dispatch(deleteAllFromCart())
+          (data.responseData[0].items.map((item) => {
+            dispatch(addToCart({
+              ...item,
+              quantity: item.quantity
+
+            }))
+          }))
+          setIsLoading(true)
+          // if(data.responseData[0].items.length == 0){
+            // dispatch(addToCart({
+            //   ...data.responseData[0].items
+            // }))
+          // }
+          // cogoToast.success(data.description, { position: "top-right" });
+          // setCartDetails(data.responseData[0].items)
+        } else {
+          if(data.code == 102){
+            dispatch(deleteAllFromCart())
+            setIsLoading(true)
+          }
+        }
+      }
+    );
+  }
+
+  useEffect(() => {
+    viewCartItem();
+}, [])
+
   return (
+    <>
+    {/* {console.log(isLoading)}
+    {!isLoading && 
+      <div className="flone-preloader-wrapper">
+      <div className="flone-preloader">
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  } */}
+
+
       <Router>
         <ScrollToTop>
           <Suspense
@@ -130,6 +190,7 @@ const App = () => {
           </Suspense>
         </ScrollToTop>
       </Router>
+      </>
   );
 };
 
