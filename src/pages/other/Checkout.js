@@ -1,10 +1,14 @@
 import { Fragment,useRef  } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { useDispatch, useSelector } from "react-redux";
 // import { useSelector } from "react-redux";
+import Alert from 'react-bootstrap/Alert';
 import { getDiscountPrice } from "../../helpers/product";
+import { Button } from "react-bootstrap";
 import SEO from "../../components/seo";
 import LayoutOne from "../../layouts/LayoutOne";
+import Modal from "react-bootstrap/Modal";
 import Breadcrumb from "../../wrappers/breadcrumb/Breadcrumb";
 import cogoToast from 'cogo-toast';
 import React, { useState, useEffect, useCallback } from "react";
@@ -13,32 +17,44 @@ import { POST_METHOD } from "../../components/Constants/Method"
 import { addToCart, decreaseQuantity, deleteFromCart, deleteAllFromCart } from "../../store/slices/cart-slice";
 import GooglePayButton from '@google-pay/button-react'
 import { initialState } from "react-use-cart";
+let clientSecret = 'sk_test_51McibOLu6kryVLFNz5u9xGMfKSF63IFBdEhxHv2WqeSOSK6fFQRs4OVZpEtMk2QHkNtLGYHsFfPxtgPVqZHsbrJE00hOOT347g'
 
 
 
 const Checkout = () => {
+
+  const stripe = useStripe();
+
+
   let cartTotalPrice = 0;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const elements = useElements();
   const [gPayBtn, setGPayBtn] = useState(null);
   const [finaltotal,setIsFinalTotal] = useState(0)
+  const [isModal, setIsModal] = useState(false)
   const [addresSubmited,setAddresSubmited] = useState(false)
   let { pathname } = useLocation();
   const currency = useSelector((state) => state.currency);
   const { cartItems } = useSelector((state) => state.cart);
+  const [isDisable, setIsDisable] = useState(true)
   const [cartDetails, setCartDetails] = useState([])
   const [total, setTotal] = useState()
   const [isLoading,setIsLoading] = useState(false)
+  const [cartAdd,setCartAdd] = useState(false)
   const { sendRequest } = useHttp();
   const [isFormSubmitted, setIsFormSubmitted] = useState(true);
   const [userDetails, setUserDetails] = useState({
     address: ''
   });
   const [updateUerDetails, setUpdateUserDetals] = useState({})
-
+  const [userCredentials, setUserCredentials] = useState({
+    userId: sessionStorage.getItem('userId'),
+    jwtToken: sessionStorage.getItem('Jwt Token'),
+  })
+  const [cardList, setCardList] = useState([])
 
   const getUserDetails = () => {
-    console.log("ADADGW");
     sendRequest(
       {
         url: POST_METHOD.getUserDetails,
@@ -49,6 +65,24 @@ const Checkout = () => {
         console.log(data);
         if (data.success) {
           setUserDetails(data.responseData)
+        } else {
+          // cogoToast.success(data.description, { position: "bottom-left" });
+        }
+      }
+    );
+  }
+
+  const getCardListForUser = () => {
+    sendRequest(
+      {
+        url: POST_METHOD.getCardListForUser,
+        method: "POST",
+        body: { userId: sessionStorage.getItem('userId') }
+      },
+      (data) => {
+        console.log(data);
+        if (data.success) {
+          setCardList(data.responseData)
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
         }
@@ -78,9 +112,32 @@ const Checkout = () => {
       }
     );
   }
+
+  const onSelectCard = (event) => {
+    const value = event.target.value
+    sendRequest({
+      url: POST_METHOD.selectCard,
+      method: 'POST',
+      body: { ...userCredentials, cardId: value},
+      showErrorToast: true,
+      showSuccessToast: true,
+      isShowLoading: true,
+      isHideLoading: true
+    }, (data) => {
+      if (data.success) {
+        // setCardId(event.target.value)
+        // detCardDetail(data.responseData)
+      } else {
+        // detCardDetail({})
+      }
+
+    });
+  }
+
   useEffect(() => {
     viewCartItem();
     getUserDetails();
+    getCardListForUser()
   }, [])
 
   const addHistory = () => {
@@ -102,6 +159,83 @@ const Checkout = () => {
       }
     );
   }
+
+  const onAddCard = async (event) => {
+    
+    event.preventDefault();
+   
+    if (!stripe || !elements) {
+      return;
+    }
+    const token = await stripe.createToken(elements.getElement(CardElement));
+    if(token.token){
+      setIsLoading(false)
+   }
+    const payload = await stripe.createPaymentMethod({
+      type: "card",
+      card: elements.getElement(CardElement),
+    });
+
+    
+    
+    
+    const cardData = {
+      ...userCredentials,
+      paymentMethod: payload.paymentMethod.id,
+      card: token.card,
+      token: token.token,
+    };
+
+
+    console.log(cardData);
+    sendRequest({
+      url: POST_METHOD.addCard,
+      method: 'POST',
+      body: cardData,
+      showErrorToast: true,
+      showSuccessToast: true,
+      isShowLoading: true,
+      isHideLoading: true
+    }, (data) => {
+      if (data.success) {
+        getCardListForUser()
+        setIsLoading(true)
+        setCartAdd(true)
+      } else {
+        setCardList([])
+      }
+
+    });
+    // setIsModal(false)
+
+  };
+
+  const onSubmit = () => {
+    setIsLoading(false)
+    sendRequest({
+      url: POST_METHOD.generatePaymentIntent,
+      method: 'POST',
+      body: {
+        ...userCredentials,
+        amount:total
+      },
+      isShowLoading: true,
+      isHideLoading: true
+    }, (data) => {
+      if (data.success) {
+        setIsLoading(true)
+        setIsModal(true)
+        setCartAdd(false)
+        addHistory()
+        navigate('/thankyou', { replace: true });
+      } else {
+        setCardList([])
+      }
+
+    });
+  }
+
+
 
   const updateuser = (data) => {
     sendRequest(
@@ -156,6 +290,9 @@ const Checkout = () => {
   // }
   // }
   
+
+
+
 
   return (
     <Fragment>
@@ -262,61 +399,7 @@ const Checkout = () => {
                     </div>
                     {console.log(finaltotal)}
                     <div className="mt-3">
-                    <GooglePayButton
-                      environment="TEST"
-                      paymentRequest={{
-                        apiVersion: 2,
-                        apiVersionMinor: 0,
-                        allowedPaymentMethods: [
-                          {
-                            type: 'CARD',
-                            parameters: {
-                              allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                              allowedCardNetworks: ['MASTERCARD', 'VISA', 'AMEX', 'INTERAC', 'DISCOVER'],
-                              billingAddressRequired: true,
-                              billingAddressParameters: {
-                                format: "FULL",
-                                phoneNumberRequired: true
-                              }
-                            },
-                            tokenizationSpecification: {
-                              type: 'PAYMENT_GATEWAY',
-                              parameters: {
-                                gateway: 'example',
-                                gatewayMerchantId: 'exampleGatewayMerchantId',
-                              },
-                            },
-                          },
-                        ],
-                        merchantInfo: {
-                          merchantId: '12345678901234567890',
-                          merchantName: 'Demo Merchant',
-                        },
-                        transactionInfo: {
-                          totalPriceStatus: 'FINAL',
-                          totalPriceLabel: 'Total',
-                          totalPrice: finaltotal,
-                          currencyCode: 'USD',
-                          countryCode: 'US',
-                        },
-                        // shippingAddressPa
-                        callbackIntents: ['PAYMENT_AUTHORIZATION']
-                      }}
-                      onLoadPaymentData={paymentRequest => {
-                        console.log('load payment data', paymentRequest);
-                        // navigate('/shop-grid-filter', { replace: true });
-                      }}
-                      onPaymentAuthorized={paymentData => {
-                        updateuser(paymentData.paymentMethodData.info.billingAddress.address1)
-                        console.log(paymentData);
-                        navigate('/thankyou', { replace: true });
-                        addHistory()
-                        return { transactionState: 'SUCCESS' }
-                      }}
-                      existingPaymentMethodRequired='false'
-                      buttonColor="default"
-                      buttonType="Buy"
-                    />
+            <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={() => { setIsModal(true) }}>Pay</Button>
                     </div>
                   </div>
                 </div>
@@ -340,6 +423,71 @@ const Checkout = () => {
             )}
           </div>
         </div>
+
+
+        <Modal show={isModal} onHide={() => { setIsModal(false) }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Card details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+            {!cartAdd ? 
+          <form onSubmit={onAddCard}>
+            <label className="row ">
+              <CardElement />
+            </label>
+            
+            <Button
+            style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} 
+              className=" mt-3 btn float-end"
+              type="submit"
+              disabled={!stripe}
+            >
+              Add
+            </Button>
+          </form>
+          :
+          <>
+           <Alert variant="success">
+           Card Is successFully Added Now you can pay with this card
+        </Alert>
+          
+          </>
+          }
+          <div className="row" style={{marginTop:"120px"}}>
+          <ul className="list-unstyled list-group list-group-custom list-group-flush mb-0">
+          {
+            cardList.map((data, index) => (
+              <li className="list-group-item px-md-4 py-3" key={index}>
+                <div className="row ">
+                  <div className="col-10 form-check">
+                    <input className="form-check-input" name='card' type="radio" defaultChecked={data.isDefault} value={data._id} onChange={onSelectCard} />
+                    <label className="form-check-label" htmlFor={data.symbol}>
+
+                      XXXX-XXXX-XXXX-{data.lastFour} <span>{data.cardType}</span>
+
+                    </label>
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+           <div className="col mt-4">
+                   <Button type="submit" className="float-end" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={() => { onSubmit() }}>Pay</Button>
+                  </div>
+          </ul>
+          </div>
+        </Modal.Body>
+        {!isLoading && 
+                <div className="flone-preloader-wrapper">
+                <div className="flone-preloader">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>}
+      </Modal>
+      
+
       </LayoutOne>
     </Fragment>
   );

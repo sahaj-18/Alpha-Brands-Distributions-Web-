@@ -14,7 +14,11 @@ export const POST_METHOD = {
     getUserDetails: '/api/user/gteUserDetail',
     userLogout: '/api/user/userLogout',
     addHistory: '/api/admin/addToOrderHistory',
-    clearWholeCart: '/api/admin/clearWholeCart'
+    clearWholeCart: '/api/admin/clearWholeCart',
+    addCard: '/api/admin/addCard',
+    getCardListForUser: '/api/admin/getCardListForUser',
+    selectCard:'/api/admin/selectCard',
+    generatePaymentIntent: '/api/admin/getStripePaymentIdForWallets'
 }
 
 export const GET_METHOD = {

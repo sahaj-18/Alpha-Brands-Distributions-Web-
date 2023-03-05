@@ -10,7 +10,8 @@ const useHttp = () =>{
         setIsLoading(true);
         setError(null);
         try {
-          const response = await fetch('https://api.alphabrandsdistribution.com' + requestConfig.url, {
+          // const response = await fetch('https://api.alphabrandsdistribution.com' + requestConfig.url, {
+          const response = await fetch('http://localhost:5000' + requestConfig.url, {
               method: requestConfig.method ? requestConfig.method : 'POST',
               headers:!requestConfig.isFormData ? (requestConfig.headers) ? requestConfig.headers  : {
                 'Content-Type': 'application/json'
