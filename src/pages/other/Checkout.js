@@ -64,7 +64,10 @@ const Checkout = () => {
       (data) => {
         console.log(data);
         if (data.success) {
-          setUserDetails(data.responseData)
+          setUserDetails({address : data.responseData.address})
+          if(data.responseData.address === ''){
+            setAddresSubmited(true)
+          }
         } else {
           // cogoToast.success(data.description, { position: "bottom-left" });
         }
@@ -186,8 +189,6 @@ const Checkout = () => {
       token: token.token,
     };
 
-
-    console.log(cardData);
     sendRequest({
       url: POST_METHOD.addCard,
       method: 'POST',
@@ -235,9 +236,16 @@ const Checkout = () => {
     });
   }
 
+const getAddress = (event) => {
+      let value = event.target.value;
+      let name = event.target.name;
+      setUserDetails({
+        [name]: value
+      })
 
+}
 
-  const updateuser = (data) => {
+  const updateuser = () => {
     sendRequest(
       {
         url: POST_METHOD.userUpdate,
@@ -245,63 +253,27 @@ const Checkout = () => {
         body: {
           userId: sessionStorage.getItem('userId'), 
           jwtToken:sessionStorage.getItem('Jwt Token'),
-          address:data
+          address:userDetails.address
         },
         isFormData:false
       },
       (data) => {
         if (data.success) {
-          // cogoToast.success(data.description, { position: "bottom-left" });
-          // getUserDetails()
-          // setAddresSubmited(true)
+          cogoToast.success(data.description, { position: "top-right" });
+          getUserDetails()
+          setAddresSubmited(false)
         } else {
-          // cogoToast.error(data.description, { position: "bottom-left" });
+          cogoToast.error(data.description, { position: "top-right" });
         }
       }
     );
   }
 
-  // const addAddress = () => {
-  //   // setUserDetails({
-  //   //   ...userDetails,
-  //   //   address:reference.current.value
-  //   // })
-  //   // setIsFormSubmitted(true);
-  //   let isFormValid ;
-  //   // Object.keys(validation).map((data) => {
-  //   //   if (isFormValid) {
-  //   //     isFormValid = validation[data];
-  //   //   }
-  //   //   return data;
-  //   // });
-  //   // if(reference.current.value.length > 6){
-  //   //   console.log('***aaaa');
-  //   //   isFormValid = true
-  //   //   setIsFormSubmitted(true)
-  //   // }else{
-  //   //   cogoToast.error("Address Is Required", { position: "bottom-left" });
-
-  //   // }
-
-  //   // console.log(isFormValid);
-  //   if (isFormValid) {
-      
-   
-  // }
-  // }
-  
-
-
 
 
   return (
     <Fragment>
-      {/* <SEO
-        titleTemplate="Checkout"
-        description="Checkout page of flone react minimalist eCommerce template."
-      /> */}
       <LayoutOne headerTop="visible">
-        {/* breadcrumb */}
         <Breadcrumb
           pages={[
             { label: "Home", path: process.env.PUBLIC_URL + "/" },
@@ -325,40 +297,6 @@ const Checkout = () => {
             {}
             {cartDetails && cartDetails.length >= 1 ? (
               <div className="row">
-                {/* <div className="col-lg-7"> */}
-                  {/* <div className="billing-info-wrap"> */}
-                    {/* <h3>Billing Details</h3> */}
-                    {/* <div className="row"> */}
-                    {/* </div> */}
-
-                    {/* <div className="additional-info-wrap"> */}
-                      {/* <div className="additional-info"> */}
-                        {/* <label>Your Address</label> */}
-                        {/* <textarea
-                          placeholder="Enter Your Address ..."
-                          name="address"
-                          value={userDetails.address}
-                          disabled={isDisable}
-                        /> */}
-
-                        {/* <div className="your-order-area">
-                          <div className="place-order mt-25">
-                            <button className="btn-hover">Add Address</button>
-                          </div>
-                        </div> */}
-                      {/* </div> */}
-                    {/* </div> */}
-
-
-
-                  {/* </div> */}
-                {/* </div> */}
-
-
-
-
-                
-          
                 <div className="col-lg-8">
                   <div className="your-order-area">
                     <h3>Your order</h3>
@@ -394,12 +332,20 @@ const Checkout = () => {
                             </li>
                           </ul>
                         </div>
+
+                        <div className="your-order-total">
+                          <textarea style={{backgroundColor:"white"}} name="address" placeholder="Enter Your Delivery Address" value={userDetails.address} onChange={getAddress}></textarea>
+                          <div>
+                          <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={updateuser}>Add Address</Button>
+                          </div>
+                        </div>
+
                       </div>
                       <div className="payment-method"></div>
                     </div>
                     {console.log(finaltotal)}
                     <div className="mt-3">
-            <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={() => { setIsModal(true) }}>Pay</Button>
+            <Button type="submit" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={() => { setIsModal(true) }} disabled={addresSubmited}>Pay</Button>
                     </div>
                   </div>
                 </div>
@@ -472,9 +418,11 @@ const Checkout = () => {
               </li>
             ))
           }
-           <div className="col mt-4">
+          {cardList.length > 0 ?  <div className="col mt-4">
                    <Button type="submit" className="float-end" style={{ backgroundColor: "#a749ff", border: "1px solid #a749ff"}} onClick={() => { onSubmit() }}>Pay</Button>
-                  </div>
+                  </div> : <>
+                  </>}
+          
           </ul>
           </div>
         </Modal.Body>
